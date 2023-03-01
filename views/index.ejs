@@ -15,7 +15,8 @@
           class="column is-10 is-offset-1 notification is-info is-light box container"
         >
           <div class="title">Restaurants</div>
-          <% if (locals.getRestaurant) { %>
+          <% if (locals) { %>
+          <!-- ??? why locals??? -->
           <div class="table-container">
             <table class="table is-bordered is-hoverable is-striped is-narrow">
               <thead>
@@ -23,6 +24,8 @@
                   <th>#</th>
                   <th>Name</th>
                   <th>Description</th>
+                  <th></th>
+                  <th></th>
                 </tr>
               </thead>
               <% let i=0; %> <% for(i=0; i < Restaurants.length; i++) { %>
@@ -30,11 +33,17 @@
                 <td><%= Restaurants[i].restaurant_id %></td>
                 <td><%= Restaurants[i].name %></td>
                 <td><%= Restaurants[i].description %></td>
+                <td>
+                  <a href="/deleteRestaurant"><i class="fas fa-trash"></i></a>
+                </td>
+                <td>
+                  <a href="/showReview"><i class="fas fa-star"></i></a>
+                </td>
               </tr>
               <% } %>
               <tfoot>
                 <tr>
-                  <td colspan="4">There are <%= i %> restaurants.</td>
+                  <td colspan="5">There are <%= i %> restaurants.</td>
                 </tr>
               </tfoot>
             </table>
