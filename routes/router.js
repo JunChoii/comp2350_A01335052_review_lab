@@ -22,7 +22,7 @@ router.post("/addRestaurant", async (req, res) => {
   console.log("form submit");
   console.log(req.body);
   try {
-    const success = await dbModel.addUser(req.body);
+    const success = await dbModel.addRestaurant(req.body);
     if (success) {
       res.redirect("/");
     } else {
@@ -37,11 +37,11 @@ router.post("/addRestaurant", async (req, res) => {
 });
 
 router.get("/deleteRestaurant", async (req, res) => {
-  console.log("delete user");
+  console.log("delete restaurant");
   console.log(req.query);
-  let userId = req.query.id;
-  if (userId) {
-    const success = await dbModel.deleteUser(userId);
+  let restaurantId = req.query.id;
+  if (restaurantId) {
+    const success = await dbModel.deleteRestaurant(restaurantId);
     if (success) {
       res.redirect("/");
     } else {
@@ -56,14 +56,48 @@ router.get("/showReview", async (req, res) => {
   console.log("page hit");
 
   try {
-    const result = await dbModel.getAllUsers();
-    res.render("index", { allUsers: result });
+    const result = await dbModel.getReview();
+    res.render("index", { reviews: result });
 
     //Output the results of the query to the Heroku Logs
     console.log(result);
   } catch (err) {
     res.render("error", { message: "Error reading from MySQL" });
     console.log("Error reading from mysql");
+  }
+});
+
+router.post("/addReview", async (req, res) => {
+  console.log("form submit");
+  console.log(req.body);
+  try {
+    const success = await dbModel.addReview(req.body);
+    if (success) {
+      res.redirect("/showReview");
+    } else {
+      res.render("error", { message: "Error writing to MySQL" });
+      console.log("Error writing to MySQL");
+    }
+  } catch (err) {
+    res.render("error", { message: "Error writing to MySQL" });
+    console.log("Error writing to MySQL");
+    console.log(err);
+  }
+});
+
+router.get("/deleteReview", async (req, res) => {
+  console.log("delete review");
+  console.log(req.query);
+  let reviewId = req.query.id;
+  if (reviewId) {
+    const success = await dbModel.deleteReview(reviewId);
+    if (success) {
+      res.redirect("/showReview");
+    } else {
+      res.render("error", { message: "Error writing to MySQL" });
+      console.log("Error writing to mysql");
+      console.log(err);
+    }
   }
 });
 

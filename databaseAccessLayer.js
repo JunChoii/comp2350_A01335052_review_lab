@@ -42,17 +42,17 @@ WHERE web_user_id = :userId;
   }
 }
 
-async function deleteRestaurant(webUserId) {
+async function deleteRestaurant(restaurant_id) {
   let sqlDeleteUser = `
-   DELETE FROM web_user
-   WHERE web_user_id = :userID
+   DELETE FROM restaruant
+   WHERE restaruant_id = :restaurant_id
    `;
   let params = {
-    userID: webUserId,
+    restaurant_id: restaurant_id,
   };
-  console.log(sqlDeleteUser);
+  console.log(sqlDeleteRestaurant);
   try {
-    await database.query(sqlDeleteUser, params);
+    await database.query(sqlDeleteRestaurant, params);
     return true;
   } catch (err) {
     console.log(err);
@@ -62,7 +62,7 @@ async function deleteRestaurant(webUserId) {
 
 async function getReview() {
   let sqlQuery = `
-		SELECT restaurant_id, reviewer_name, details, rating
+		SELECT review_id, restaurant_id, reviewer_name, details, rating
 		FROM review;
 	`;
 
@@ -81,20 +81,22 @@ async function getReview() {
 const passwordPepper = "SeCretPeppa4MySal+";
 async function addReview(postData) {
   let sqlInsertSalt = `
-INSERT INTO web_user (first_name, last_name, email, password_salt)
-VALUES (:first_name, :last_name, :email, sha2(UUID(),512));
+INSERT INTO review (review_id, restaurant_id, reviewer_name, details, rating)
+VALUES (:review_id, :restaurant_id, :reviewer_name, :details, :rating);
 `;
   let params = {
-    first_name: postData.first_name,
-    last_name: postData.last_name,
-    email: postData.email,
+    review_id: postData.review_id,
+    restaurant_id: postData.restaurant_id,
+    reviewer_name: postData.reviewer_name,
+    details: postData.details,
+    rating: postData.rating,
   };
   console.log(sqlInsertSalt);
   try {
     const results = await database.query(sqlInsertSalt, params);
     let insertedID = results.insertId;
     let updatePasswordHash = `
-UPDATE web_user
+UPDATE review
 SET password_hash = sha2(concat(:password,:pepper,password_salt),512)
 WHERE web_user_id = :userId;
 `;
@@ -112,17 +114,14 @@ WHERE web_user_id = :userId;
   }
 }
 
-async function deleteReview(webUserId) {
-  let sqlDeleteUser = `
-   DELETE FROM web_user
-   WHERE web_user_id = :userID
+async function deleteReview() {
+  let sqlDeleteReview = `
+   DELETE FROM review
+   WHERE review_id = :reviewer_name
    `;
-  let params = {
-    userID: webUserId,
-  };
-  console.log(sqlDeleteUser);
+  console.log(sqlDeleteReview);
   try {
-    await database.query(sqlDeleteUser, params);
+    await database.query(sqlDeleteReview, params);
     return true;
   } catch (err) {
     console.log(err);
