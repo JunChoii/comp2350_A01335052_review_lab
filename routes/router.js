@@ -8,7 +8,7 @@ router.get("/", async (req, res) => {
 
   try {
     const result = await dbModel.getRestaurant();
-    res.render("index", { getRestaurant: result });
+    res.render("index", { Restaurants: result });
 
     //Output the results of the query to the Heroku Logs
     console.log(result);

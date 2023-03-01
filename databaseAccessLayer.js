@@ -10,7 +10,7 @@ async function getRestaurant() {
     console.log(results[0]);
     return results[0];
   } catch (err) {
-    console.log("Error selecting from todo table");
+    console.log("Error selecting from restaurant table");
     console.log(err);
     return null;
   }
@@ -19,20 +19,20 @@ async function getRestaurant() {
 ////
 async function addRestaurant(postData) {
   let sqlInsertSalt = `
-INSERT INTO web_user (first_name, last_name, email, password_salt)
-VALUES (:first_name, :last_name, :email, sha2(UUID(),512));
+INSERT INTO restaurant (restaurant_id, name, description)
+VALUES (:restaurant_id, :name, :description);
 `;
   let params = {
-    first_name: postData.first_name,
-    last_name: postData.last_name,
-    email: postData.email,
+    restaurant_id: postData.restaurant_id,
+    name: postData.name,
+    description: postData.description,
   };
   console.log(sqlInsertSalt);
   try {
     const results = await database.query(sqlInsertSalt, params);
     let insertedID = results.insertId;
     let updatePasswordHash = `
-UPDATE web_user
+UPDATE restaurant
 SET password_hash = sha2(concat(:password,:pepper,password_salt),512)
 WHERE web_user_id = :userId;
 `;
