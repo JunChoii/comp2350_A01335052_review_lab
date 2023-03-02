@@ -21,7 +21,6 @@ router.get("/", async (req, res) => {
 router.post("/addRestaurant", async (req, res) => {
   console.log("form submit");
   console.log(req.body);
-  let restaurantId = req.query.id;
   try {
     const success = await dbModel.addRestaurant(req.body);
     if (success) {

@@ -17,25 +17,20 @@ async function getRestaurant() {
 }
 
 ////
-async function addRestaurant(postData) {
-  let sqlInsertSalt = `
-INSERT INTO restaurant (restaurant_id, name, description)
-VALUES (:restaurant_id, :name, :description);
+async function addRestaurant(restaurant) {
+  let sqlInsertRestaurant = `
+INSERT INTO restaurant (name, description)
+VALUES (:name, :description);
 `;
   let params = {
-    restaurant_id: postData.restaurant_id,
-    name: postData.name,
-    description: postData.description,
+    id: restaurant.restaurant_id,
+    name: restaurant.name,
+    description: restaurant.description,
   };
-  console.log(sqlInsertSalt);
+  console.log(sqlInsertRestaurant);
   try {
-    const results = await database.query(sqlInsertSalt, params);
-    let insertedID = results.insertId;
-    let updatePasswordHash = `
-UPDATE restaurant
-SET password_hash = sha2(concat(:password,:pepper,password_salt),512)
-WHERE web_user_id = :userId;
-`;
+    const results = await database.query(sqlInsertRestaurant, params);
+    return results[0];
   } catch (err) {
     console.log(err);
     return false;
@@ -43,9 +38,9 @@ WHERE web_user_id = :userId;
 }
 
 async function deleteRestaurant(restaurant_id) {
-  let sqlDeleteUser = `
-   DELETE FROM restaruant
-   WHERE restaruant_id = :restaurant_id
+  let sqlDeleteRestaurant = `
+   DELETE FROM restaurant
+   WHERE restaurant_id = :restaurant_id
    `;
   let params = {
     restaurant_id: restaurant_id,
@@ -77,8 +72,6 @@ async function getReview() {
   }
 }
 
-////
-const passwordPepper = "SeCretPeppa4MySal+";
 async function addReview(postData) {
   let sqlInsertSalt = `
 INSERT INTO review (review_id, restaurant_id, reviewer_name, details, rating)
@@ -94,19 +87,7 @@ VALUES (:review_id, :restaurant_id, :reviewer_name, :details, :rating);
   console.log(sqlInsertSalt);
   try {
     const results = await database.query(sqlInsertSalt, params);
-    let insertedID = results.insertId;
-    let updatePasswordHash = `
-UPDATE review
-SET password_hash = sha2(concat(:password,:pepper,password_salt),512)
-WHERE web_user_id = :userId;
-`;
-    let params2 = {
-      password: postData.password,
-      pepper: "passwordPepper",
-      userId: insertedID,
-    };
-    console.log(updatePasswordHash);
-    const results2 = await database.query(updatePasswordHash, params2);
+    console.log(results[0]);
     return true;
   } catch (err) {
     console.log(err);
