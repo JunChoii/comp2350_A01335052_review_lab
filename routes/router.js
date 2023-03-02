@@ -8,7 +8,7 @@ router.get("/", async (req, res) => {
 
   try {
     const result = await dbModel.getRestaurant();
-    res.render("index", { Restaurants: result });
+    res.render("index", { restaurants: result });
 
     //Output the results of the query to the Heroku Logs
     console.log(result);
@@ -21,6 +21,7 @@ router.get("/", async (req, res) => {
 router.post("/addRestaurant", async (req, res) => {
   console.log("form submit");
   console.log(req.body);
+  let restaurantId = req.query.id;
   try {
     const success = await dbModel.addRestaurant(req.body);
     if (success) {
@@ -54,10 +55,10 @@ router.get("/deleteRestaurant", async (req, res) => {
 
 router.get("/showReview", async (req, res) => {
   console.log("page hit");
-
+  let restaurantId = req.query.id;
   try {
-    const result = await dbModel.getReview();
-    res.render("index", { reviews: result });
+    const result = await dbModel.getReview(restaurantId);
+    res.render("review", { reviews: result, restaurantId: restaurantId });
 
     //Output the results of the query to the Heroku Logs
     console.log(result);
@@ -71,9 +72,9 @@ router.post("/addReview", async (req, res) => {
   console.log("form submit");
   console.log(req.body);
   try {
-    const success = await dbModel.addReview(req.body);
+    const success = await dbModel.addReview(req.body, req.query.id);
     if (success) {
-      res.redirect("/showReview");
+      res.redirect(`/showReview?id=${req.query.id}`);
     } else {
       res.render("error", { message: "Error writing to MySQL" });
       console.log("Error writing to MySQL");
@@ -85,14 +86,15 @@ router.post("/addReview", async (req, res) => {
   }
 });
 
-router.get("/deleteReview", async (req, res) => {
+router.get("/deleteReview/:restaurantId", async (req, res) => {
   console.log("delete review");
   console.log(req.query);
+  let restaurantId = req.params.restaurantId;
   let reviewId = req.query.id;
   if (reviewId) {
     const success = await dbModel.deleteReview(reviewId);
     if (success) {
-      res.redirect("/showReview");
+      res.redirect(`/showReview?id=${restaurantId}`);
     } else {
       res.render("error", { message: "Error writing to MySQL" });
       console.log("Error writing to mysql");
